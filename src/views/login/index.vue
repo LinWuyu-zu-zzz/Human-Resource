@@ -54,6 +54,11 @@
 </template>
 
 <script>
+// 正常公司中有几个环境?  1.开发环境dev  2.测试环境test  3.预发uat  4.线上prod
+// 在项目里如何配置这几个环境?  - 通过 .env配置 baseURL (base api
+// - 开发环境的接口前缀: /api
+// - 线上环境的接口前缀: /prod-api
+
 import { validUsername } from '@/utils/validate'
 
 export default {
