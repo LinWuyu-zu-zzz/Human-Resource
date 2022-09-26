@@ -15,6 +15,13 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+// import { imgError } from '@/directive' // 按需注册: 不太好,麻烦
+// Vue.directive('imgError', imgError) // 指令名称, 指令执行的逻辑
+import * as directive from '@/directive' // 全局注册:import * as 变量,得到的是一个对象{ 变量1：对象1，变量2： 对象2 ... }
+Object.keys(directive).forEach(key => { // Object.keys: 获取所有keys,即自定义名字
+  Vue.directive(key, directive[key]) // 即key,value 遍历所有自定义事件名字,统一注册
+})
+
 // set ElementUI lang to EN
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

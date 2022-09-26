@@ -11,9 +11,9 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img src="http://destiny001.gitee.io/image/monkey_02.jpg" class="user-avatar">
+          <img v-imgError="defaultImg" :src="staffPhoto" class="user-avatar">
           <i class="el-icon-caret-bottom" />
-          <span>用户名</span>
+          <span>{{ name }}</span>
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
@@ -35,17 +35,20 @@
 import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import defaultImg from '@/assets/common/head.jpg' // 给一个默认图片地址
 
 export default {
   components: {
     // Breadcrumb,
     Hamburger
   },
+  data() {
+    return {
+      defaultImg: defaultImg // 后端返回了图片地址,但无效图片加载不出来时会换成这个图片,而不是裂开
+    }
+  },
   computed: {
-    ...mapGetters([
-      'sidebar',
-      'avatar'
-    ])
+    ...mapGetters(['sidebar', 'avatar', 'name', 'staffPhoto'])
   },
   methods: {
     toggleSideBar() {

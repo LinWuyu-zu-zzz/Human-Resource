@@ -107,6 +107,8 @@ export default {
         // 发送请求 模块名
         await this.$store.dispatch('user/loginAction', this.loginForm)
         this.$router.push('/') // 跳转路由
+
+        // await this.$store.dispatch('user/getUserInfo') // 测试一下能不能成功调用接口,接口文档中不需要参数
       } finally {
         this.loading = false // 把加载中属性复原,不转了
       }
