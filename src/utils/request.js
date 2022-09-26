@@ -21,8 +21,8 @@ serve.interceptors.response.use(
     Message.error(message) // 组件库把错误消息提示出来
     return Promise.reject(new Error(message)) // 如果请求不成功success为false,那么就返回错误数据
   },
-  (error) => { // 接口有问题,那么进入error的回调
-    Message.error(error.message)
+  (error) => { // 如果接口有问题,那么进入error的回调
+    Message.error(error.message) // 组件库把错误消息提示出来
     return Promise.reject(error)
   })
 
