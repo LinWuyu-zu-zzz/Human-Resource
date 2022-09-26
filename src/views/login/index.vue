@@ -1,133 +1,115 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
+    <el-form
+      ref="loginForm"
+      class="login-form"
+      auto-complete="on"
+      label-position="left"
+      :model="loginForm"
+      :rules="rules"
+    >
       <div class="title-container">
         <h3 class="title">
           <img src="@/assets/common/login-logo.png" alt="">
         </h3>
       </div>
 
-      <el-form-item prop="username">
-        <span class="svg-container">
-          <svg-icon icon-class="user" />
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
+      <!-- 手机输入框和字体图标 (使用icon) -->
+      <el-form-item prop="mobile">
+        <span
+          class="svg-container el-icon-user-solid"
         />
+        <el-input v-model="loginForm.mobile" placeholder="请输入手机号码" />
       </el-form-item>
 
+      <!-- 密码输入框,字体图标,小眼睛图片 (使用svg图片) -->
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="Password"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+
+        <el-input ref="pwd" v-model="loginForm.password" :type="passwordType" />
+
+        <span class="svg-container" @click="showPwd">
+          <svg-icon :icon-class="passwordType==='password'?'eye':'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button class="loginBtn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-
+      <el-button class="loginBtn" :loading="loading" @click="login">登录</el-button>
       <div class="tips">
         <span style="margin-right:20px;">账号: 13800000002</span>
         <span> 密码: 123456</span>
       </div>
 
     </el-form>
-
   </div>
+  <!-- 环境变量的作用
+  1. 正常公司中 有几个环境 4 开发 dev 测试 test 预发 uat 线上 pro
+  2. 在项目里如何配置这几个环境  通过 .env 配置 base api
+  开发环境的接口前缀 /api
+  线上环境的接口前缀 /prod-api
+   -->
 </template>
 
 <script>
-// 正常公司中有几个环境?  1.开发环境dev  2.测试环境test  3.预发uat  4.线上prod
-// 在项目里如何配置这几个环境?  - 通过 .env配置 baseURL (base api
-// - 开发环境的接口前缀: /api
-// - 线上环境的接口前缀: /prod-api
+/* 正常公司中有几个环境?  1.开发环境dev  2.测试环境test  3.预发uat  4.线上prod
+   在项目里如何配置这几个环境?  - 通过 .env配置 baseURL (base api
+     - 开发环境的接口前缀: /api
+     - 线上环境的接口前缀: /prod-api */
 
-import { validUsername } from '@/utils/validate'
-
+import { validMobile } from '@/utils/validate'
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+    const phoneValid = (rule, value, callback) => {
+      if (!validMobile(value)) { // utiles文件夹里封装的validMobile函数
+        callback(new Error('手机号码格式不正确')) // 如果没成功
       } else {
         callback()
       }
     }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
-      } else {
-        callback()
-      }
-    }
+
     return {
+      // 步骤: 1.绑定type  2.小眼睛三元表达式  3.小眼睛click修改type属性是否是password,聚焦
+      // 4.绑定input框的值v-model='AA.aa'
+      passwordType: 'password', // 让input框先默认password
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        mobile: '13800000002', // 后端格式是这样
+        password: '123456'
       },
-      loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+      rules: { // 规则是对象,每一条规则是一个数组
+        mobile: [
+          { required: true, message: '手机号必填', trigger: 'blur' },
+          {
+            validator: phoneValid, trigger: 'blur' // phoneValid:指data里面const phoneValid函数
+          }
+        ],
+        password: [
+          { required: true, message: '密码必填', trigger: 'blur' },
+          { min: 6, max: 16, message: '密码格式不正确', trigger: 'blur' }
+        ]
       },
-      loading: false,
-      passwordType: 'password',
-      redirect: undefined
-    }
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect
-      },
-      immediate: true
+      loading: false
     }
   },
   methods: {
     showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
+      // 点击小眼睛,切换 eye 和 eye-open, 即type属性是否改password
+      this.passwordType === 'password' ? this.passwordType = '' : this.passwordType = 'password'
       this.$nextTick(() => {
-        this.$refs.password.focus()
+        this.$refs.pwd.focus() // DOM更新是异步的,$nextTick()把任务推向微任务/异步任务,不然拿不到input
       })
     },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+    async login() {
+      try {
+        await this.$refs.loginForm.validate() // 整个表单校验,点击登录按钮,发送请求之前的加载中
+        this.loading = true
+        // 发送请求 模块名
+        await this.$store.dispatch('user/loginAction', this.loginForm)
+        this.$router.push('/') // 跳转路由
+      } finally {
+        this.loading = false // 把加载中属性复原,不转了
+      }
     }
   }
 }
@@ -138,7 +120,7 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 /* 在修改element ui 组件的样式的时候 style 不许加scoped */
 
-$bg:#283443;
+$bg:#d4e3ff;
 $light_gray:#68b0fe;
 $cursor: #fff;
 
@@ -168,7 +150,7 @@ $cursor: #fff;
       height: 47px;
       caret-color: $cursor;
 
-      &:-webkit-autofill {
+      &:-webkit-autofill { // 自动填充时的样式
         box-shadow: 0 0 0px 1000px $bg inset !important;
         -webkit-text-fill-color: $cursor !important;
       }
@@ -190,6 +172,10 @@ $cursor: #fff;
   height: 64px;
   line-height: 32px;
   font-size: 24px;
+  width:100%;
+  margin-bottom:30px;
+  border:none;
+  color:#fff
 }
 }
 </style>
