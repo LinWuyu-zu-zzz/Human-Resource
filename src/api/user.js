@@ -4,6 +4,7 @@ export function login(data) {
 
 }
 
+// 请求用户基本资料
 export function getUserInfoAPI() {
   return request({
     url: 'sys/profile',
@@ -11,6 +12,7 @@ export function getUserInfoAPI() {
   })
 }
 
+// 获取员工基本信息(如拿到用户头像)
 export const getUserDetailById = (id) => {
   return request({
     url: `/sys/user/${id}`

@@ -55,8 +55,9 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      // 退出: 1.清除token(vuex和缓存里的都要) 2.路由跳转
       await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      this.$router.push(`/login`)
     }
   }
 }

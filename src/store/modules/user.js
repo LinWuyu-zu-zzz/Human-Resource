@@ -6,17 +6,24 @@ export default {
   state: {
     token: null,
     // name: '1111' // 持久化: 做个优化,只持久化token(写在store的index.js中)
-    userInfo: {}
+    userInfo: {},
+    tokenTime: 0
   },
   mutations: {
     SET_TOKEN(state, token) {
-      state.token = token
+      state.token = token // 设置token
     },
     SET_USERINFO(state, userInfo) {
-      state.userInfo = userInfo
+      state.userInfo = userInfo // 设置userInfo
     },
     REMOVE_USERINFO(state) {
       state.userInfo = {} // 清空userInfo
+    },
+    REMOVE_TOKEN(state) {
+      state.token = null // 清除token
+    },
+    SET_TOKENTIME(state, tokenTime) {
+      state.tokenTime = tokenTime // 第一次获取token的时间(登录时)
     }
   },
   actions: {
@@ -25,6 +32,8 @@ export default {
       const data = await loginAPI(loginData) // 在响应拦截器已经解构了,这里不需要
       // console.log(data) // token
       commit('SET_TOKEN', data)
+
+      commit('SET_TOKENTIME', new Date().getTime()) // 第一次获取token的时间(登录时)
     },
     async getUserInfo({ commit }) {
       // 接口请求
@@ -40,6 +49,12 @@ export default {
       // 和 data(){ return {} } 类似
       // 深拷贝,如果别的组件调用接口时要改变这个数据,那么最原始请求来的数据不要变
       return JSON.parse(JSON.stringify(result)) // data为复杂数据类型,引用类型的对象
+    },
+
+    // 退出: 1.清除token(vuex和缓存里的都要) 2.路由跳转
+    logout({ commit }) {
+      commit('REMOVE_USERINFO')
+      commit('REMOVE_TOKEN')
     }
   }
 }

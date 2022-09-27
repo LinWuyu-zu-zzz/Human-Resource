@@ -19,7 +19,7 @@ const store = new Vuex.Store({
   getters,
   plugins: [createPersistedState({ // 调用createPersistedState函数
     // 指定模块
-    paths: ['user.token'] // 持久化,做个优化,只持久化token,而不是整个state里的数据
+    paths: ['user.token', 'user.tokenTime'] // 持久化,做个优化,只持久化token,而不是整个state里的数据
   })]
 })
 
