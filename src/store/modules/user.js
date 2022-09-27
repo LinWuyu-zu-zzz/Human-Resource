@@ -38,10 +38,10 @@ export default {
     async getUserInfo({ commit }) {
       // 接口请求
       const data = await getUserInfoAPI()
-      console.log('请求用户信息', data)
+      // console.log('请求用户信息', data)
 
       const data2 = await getUserDetailById(data.userId)
-      console.log('想拿到用户头像', data2)
+      // console.log('想拿到用户头像', data2)
 
       const result = { ...data, ...data2 } // 因为写了两个请求,统一return出去,把两个data解构再展开到一个对象中
       commit('SET_USERINFO', result)

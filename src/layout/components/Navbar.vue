@@ -15,6 +15,7 @@
           <i class="el-icon-caret-bottom" />
           <span>{{ name }}</span>
         </div>
+
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
