@@ -8,7 +8,7 @@
       </app-link>
     </template>
 
-    <!-- 侧边栏点开还有,即二级路由项 -->
+    <!-- 侧边栏点开还有,即二级路由项,不需要 -->
     <!-- <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
         <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />

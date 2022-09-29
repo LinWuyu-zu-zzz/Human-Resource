@@ -7,7 +7,7 @@ export function login(data) {
 // 请求用户基本资料
 export function getUserInfoAPI() {
   return request({
-    url: 'sys/profile',
+    url: '/sys/profile',
     method: 'POST' // 接口里不需要参数
   })
 }

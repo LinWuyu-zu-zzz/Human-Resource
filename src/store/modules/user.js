@@ -27,6 +27,7 @@ export default {
     }
   },
   actions: {
+    // 登录请求
     async loginAction({ commit }, loginData) {
       // 发送请求 双重解构
       const data = await loginAPI(loginData) // 在响应拦截器已经解构了,这里不需要
@@ -35,8 +36,8 @@ export default {
 
       commit('SET_TOKENTIME', new Date().getTime()) // 第一次获取token的时间(登录时)
     },
+    // 获取userInfo用户信息
     async getUserInfo({ commit }) {
-      // 接口请求
       const data = await getUserInfoAPI()
       // console.log('请求用户信息', data)
 

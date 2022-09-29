@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import approvalsRouter from './modules/approvals'
 import attendancesRouter from './modules/attendances'
 import departmentsRouter from './modules/departments'
