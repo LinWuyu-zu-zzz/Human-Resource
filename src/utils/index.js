@@ -115,3 +115,19 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+// 封装组件架构版块的树形结构,找到一级部门
+export function treeData(list, pid) { // 一级看pid, 二级看id
+  const arr = [] // 找到pid匹配的数据就收集到数组中
+  list.forEach(item => {
+    if (item.pid === pid) { // 如果list每一项的pid等于传过来的pid
+      const children = treeData(list, item.id) // 递归,找子级,看id, 该函数返回一个数组
+      if (children.length) {
+        item.children = children
+      }
+
+      arr.push(item)
+    }
+  })
+  return arr
+}
