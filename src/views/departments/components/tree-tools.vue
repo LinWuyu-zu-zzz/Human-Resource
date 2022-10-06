@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { delDepartments } from '@/api/departments'
 // 该组件需要对外开放属性 外部需要提供一个对象 对象里需要有name  manager
 export default {
   // props可以用数组来接收数据 也可以用对象来接收
@@ -49,15 +50,25 @@ export default {
     handleCommand(type) { // 参数是dropdown-item 的指令
       if (type === 'add') {
         this.$emit('addDept')
-        console.log('add')
 
         this.$emit('addDept', this.treeNode) // 把treeNode传给父index,再父给另一个儿子add-dept
-      } else if (type === 'edit') {
-        console.log('edit')
-        // edit
+      } else if (type === 'edit') { // 编辑部门
+      // 点击编辑部门, 弹窗显示, 回显数据
+        this.$emit('editDept', this.treeNode)
       } else {
-        console.log('del')
         // del
+        this.$confirm('您确定删除该部门的数据吗？', '删除提示', {
+          // cancelButtonText: '取消',  // 默认就有的,写不写都行
+          // confirmButtonText: '确定',
+          type: 'warning'
+        }).then(async(res) => {
+          // 如果点击了确定就会进入then
+          return delDepartments(this.treeNode.id) // 返回promise对象
+        }).then(() => {
+          //  如果删除成功了  就会进入这里
+          this.$emit('refreshDepts') // 触发自定义事件,让父组件刷新页面(调用接口重新渲染)
+          this.$message.success('删除部门成功')
+        })
       }
     }
   }

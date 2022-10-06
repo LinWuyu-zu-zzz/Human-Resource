@@ -1,5 +1,5 @@
 <template>
-  <div class="departments-container">
+  <div v-loading="loading" class="departments-container">
     <!-- 头部 -->
     <el-card class="tree-card">
       <!-- <el-row type="flex" justify="space-between" align="middle" style="height: 40px;width:100%">
@@ -27,12 +27,22 @@
 
     <!-- 树形结构-->
     <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
-      <tree-tools slot-scope="{ data }" :tree-node="data" @addDept="handleAddDept" />
+      <tree-tools
+        slot-scope="{ data }"
+        :tree-node="data"
+        @addDept="handleAddDept"
+        @editDept="handleEditDept"
+        @refreshDepts="Departments"
+      />
     </el-tree>
 
     <!-- 子组件: 把 dialogVisible传给子组件,关闭弹窗-->
     <!-- 父亲接收到子 tree-tools组件传过来的treeNode,传给另一个儿子add-dept组件 -->
-    <add-dept :dialog-visible.sync="dialogVisible" :tree-node="currentNode" />
+    <add-dept
+      ref="addDept"
+      :dialog-visible.sync="dialogVisible"
+      :tree-node="currentNode"
+    />
   </div>
 </template>
 
@@ -56,7 +66,8 @@ export default {
         label: 'name' // 树形结构每个节点必须是label才有效果,但可以改 重命名
       },
       dialogVisible: false, // 关闭弹窗,默认关闭
-      currentNode: {}
+      currentNode: {}, // 当前节点的所有数据
+      loading: false
     }
   },
   created() {
@@ -64,16 +75,29 @@ export default {
   },
   methods: {
     async Departments() {
-      const { depts, companyName, companyManage } = await getDepartments()
-      // console.log(depts)
-      this.departs = treeData(depts, '') // treeData为封装的函数,在utils-index.js
+      try {
+        this.loading = true
+        const { depts, companyName, companyManage } = await getDepartments()
+        // console.log(depts)
+        this.departs = treeData(depts, '') // treeData为封装的函数,在utils-index.js
 
-      this.company = { name: companyName, manager: companyManage, id: '' } // 不要写死,结构出来
+        this.company = { name: companyName, manager: companyManage, id: '' } // 不要写死,结构出来
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.loading = false
+      }
     },
-    handleAddDept(node) {
+    handleAddDept(node) { // 新增部门
       this.dialogVisible = true // 点击树形结构的操作结构,显示弹窗
 
       this.currentNode = node // 父亲接收子 tree-tools组件传过来的treeNode,用形参node接收
+    },
+    handleEditDept(treeNode) { // 点击编辑部门, 弹窗显示, 回显数据
+      console.log('当前节点数据', treeNode) // tree-tools组件传过来的节点数据
+      this.dialogVisible = true
+      this.currentNode = { ...treeNode } // node里面就有当前节点的所有数据,如果修改过,同步
+      this.$refs.addDept.formData = { ...treeNode } // 数据回显, node赋值给addDept组件的formData
     }
   }
 }
