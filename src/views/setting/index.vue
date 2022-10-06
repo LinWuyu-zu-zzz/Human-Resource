@@ -138,7 +138,7 @@ export default {
       } catch (error) {
         console.log(error)
       } finally {
-        this.loading = false // 显示弹出层
+        this.loading = false // 关闭加载中
       }
     },
     // 角色新增按钮

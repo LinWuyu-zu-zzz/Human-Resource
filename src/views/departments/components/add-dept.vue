@@ -12,8 +12,13 @@
         <el-input v-model="formData.code" style="width:80%" placeholder="1-50个字符" />
       </el-form-item>
       <el-form-item label="部门负责人" prop="manager">
-        <el-select style="width:80%" placeholder="请选择">
-          <el-option v-model="formData.manager" label="username11" value="username" />
+        <el-select v-model="formData.manager" style="width:80%" placeholder="请选择" @focus="getEmployeeSimple">
+          <el-option
+            v-for="item in peoples"
+            :key="item.id"
+            :label="item.username"
+            :value="item.username"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
@@ -24,15 +29,16 @@
     <el-row slot="footer" type="flex" justify="center">
       <!-- 列被分为24 -->
       <el-col :span="6">
-        <el-button type="primary" size="small">确定</el-button>
-        <el-button size="small">取消</el-button>
+        <el-button v-loading="loading" type="primary" size="small" @click="submit">确定</el-button>
+        <el-button size="small" @click="handleColse">取消</el-button>
       </el-col>
     </el-row>
   </el-dialog>
 </template>
 
 <script>
-import { getDepartments } from '@/api/departments'
+import { getDepartments, addDepartments } from '@/api/departments'
+import { getEmployeeSimple } from '@/api/emplyees'
 export default {
   name: 'AddDepts',
   props: { // 父传给子
@@ -40,7 +46,7 @@ export default {
       type: Boolean,
       default: false
     },
-    // 先拿到所有同级部门的数据,一个个比较过去,
+    // 先拿到所有同级部门的数据,一个个比较过去
     treeNode: {
       type: Object,
       default: () => ({})
@@ -89,14 +95,42 @@ export default {
           { required: true, message: '部门编码必填', trigger: 'blur' },
           { min: 1, max: 300, message: '部门名称1-300个字符', trigger: 'blur' }
         ]
-      }
+      },
+      peoples: [], // 操作-添加子部门-部门负责人下拉框
+      loading: false
     }
   },
   methods: {
+    // 关闭弹窗
     handleColse() { // 子到父index,用 .sync, 在关闭弹窗的时候 触发update:dialogVisible事件
       this.$emit('update:dialogVisible', false) // 参数false传给父index.vue
-
       this.$refs.addDeptForm.resetFields() // 清空表单,表单dom身上的方法
+      this.formData = {
+        name: '', // 部门名称
+        code: '', // 部门编码
+        manager: '', // 部门管理者
+        introduce: '' // 部门介绍
+      }
+    },
+    // 新增部门负责人
+    async getEmployeeSimple() {
+      this.peoples = await getEmployeeSimple()
+    },
+    async submit() {
+      try {
+        await this.$refs.addDeptForm.validate() // 表单校验
+        this.loading = true
+
+        // 因为是添加子部门，所以我们需要将新增的部门pid设置成当前部门的id，新增的部门就成了自己的子部门
+        await addDepartments({ ...this.formData, pid: this.treeNode.id }) // key value
+        this.$message.success('新增成功')
+        this.$parent.Departments() // 刷新父组件的组件架构列表
+        this.handleColse() // 关闭弹窗
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.$loading = false
+      }
     }
   }
 }

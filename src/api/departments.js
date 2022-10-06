@@ -7,3 +7,12 @@ export function getDepartments() {
     url: '/company/department'
   })
 }
+
+// 新增部门时,点击确定提交.
+export function addDepartments(data) {
+  return request({
+    url: '/company/department',
+    method: 'post',
+    data
+  })
+}
