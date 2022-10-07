@@ -15,6 +15,9 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import components from '@/components' // 引入公共组件里的index.js
+Vue.use(components) // 全局注册公共组件,共25条记录/导入导出
+
 // import { imgError } from '@/directive' // 按需注册: 不太好,麻烦
 // Vue.directive('imgError', imgError) // 指令名称, 指令执行的逻辑
 import * as directive from '@/directive' // 全局注册:import * as 变量,得到的是一个对象{ 变量1：对象1，变量2： 对象2 ... }
