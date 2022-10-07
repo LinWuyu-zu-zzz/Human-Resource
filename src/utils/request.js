@@ -33,7 +33,7 @@ serve.interceptors.request.use(
         return Promise.reject(new Error('token已超时')) // 这个错误会进入到响应拦截器的error里面
       }
 
-      config.headers.Authorization = `Bearer ${store.getters.token}`
+      config.headers.Authorization = `Bearer ${store.getters.token}` // 请求头
     }
     return config
   },

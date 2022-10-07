@@ -36,7 +36,7 @@ export default {
   // props可以用数组来接收数据 也可以用对象来接收
   // props: {   props属性: {  配置选项 }  }
   props: {
-    //   定义一个props属性
+    //   父亲传过来的-当前节点的所有数据
     treeNode: {
       type: Object, // 对象类型
       required: true // 要求对方使用您的组件的时候 必须传treeNode属性 如果不传 就会报错
@@ -54,7 +54,7 @@ export default {
         this.$emit('addDept', this.treeNode) // 把treeNode传给父index,再父给另一个儿子add-dept
       } else if (type === 'edit') { // 编辑部门
       // 点击编辑部门, 弹窗显示, 回显数据
-        this.$emit('editDept', this.treeNode)
+        this.$emit('editDept', this.treeNode) // 让父亲index改
       } else {
         // del
         this.$confirm('您确定删除该部门的数据吗？', '删除提示', {

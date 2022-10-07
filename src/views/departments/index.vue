@@ -4,7 +4,7 @@
     <el-card class="tree-card">
       <!-- <el-row type="flex" justify="space-between" align="middle" style="height: 40px;width:100%">
         <el-col>
-          <span>江苏传智播客教育科技股份有限公司</span>
+          <span>江苏传智播客教育科技股份有限公司</span> // 抽成一个组件
         </el-col>
         <el-col :span="4">
           <el-row type="flex" justify="end">
@@ -26,6 +26,7 @@
     </el-card>
 
     <!-- 树形结构-->
+    <!-- 使用 scoped slot 会传入两个参数node和data，分别表示当前节点的 Node 对象和当前节点的数据 -->
     <el-tree :data="departs" :props="defaultProps" :default-expand-all="true">
       <tree-tools
         slot-scope="{ data }"
