@@ -15,9 +15,12 @@
 // }
 
 // 实现组件自动注册
+import * as filters from '@/filters'
+// console.log(Object.keys(filters)) // 拿到所有过滤器的key,是一个数组
+
 const fn = require.context('./', true, /\.vue$/)
-console.log(fn.keys()) // 拿到当路径,如./PageTools/index.vue
-console.log(fn('./PageTools/index.vue')) // 根据路径拿到模块,即组件对象
+// console.log(fn.keys()) // 拿到当路径,如./PageTools/index.vue
+// console.log(fn('./PageTools/index.vue')) // 根据路径拿到模块,即组件对象
 
 // 一次性导入所有的模块
 const components = fn.keys().map(ele => {
@@ -26,7 +29,11 @@ const components = fn.keys().map(ele => {
 
 export default (Vue) => { // 方法二: 导出一个箭头函数
   components.forEach(ele => {
-    console.log(ele)
+    // console.log(ele)
     Vue.component(ele.default.name, ele.default) // Vue.component('组件名字', 组件对象)
+  })
+
+  Object.keys(filters).forEach(key => { // [formatTime,formatTime...] 过滤器每一个函数名
+    Vue.filter(key, filters[key]) // Vue.filter('过滤器名称', 过滤器对象)
   })
 }

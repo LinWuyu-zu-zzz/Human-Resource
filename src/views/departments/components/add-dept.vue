@@ -38,7 +38,7 @@
 
 <script>
 import { getDepartments, addDepartments, updateDepartments } from '@/api/departments'
-import { getEmployeeSimple } from '@/api/emplyees'
+import { getEmployeeSimple } from '@/api/employees'
 export default {
   name: 'AddDepartment',
   props: { // 父传给子

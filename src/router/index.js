@@ -67,6 +67,17 @@ export const constantRoutes = [
     }]
   },
 
+  {
+    path: '/import', // 上传文件跳转的页面,不要写在员工的路由中
+    component: Layout, // 页面在布局中,被布局组件包裹
+    hidden: true, // 页面没有属于它的导航栏,隐藏呢
+    children: [{
+      path: '',
+      name: 'import',
+      component: () => import('@/views/import')
+    }]
+  },
+
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
