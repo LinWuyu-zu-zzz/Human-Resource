@@ -8,7 +8,7 @@
 
       <template #after>
         <el-button size="small" type="warning" @click="$router.push('/import')">导入</el-button>
-        <el-button size="small" type="danger">导出</el-button>
+        <el-button size="small" type="danger" @click="exportExcel">导出</el-button>
         <el-button size="small" type="primary" @click="handleEmployee">新增员工</el-button>
       </template>
     </PageTools>
@@ -129,6 +129,40 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    async exportExcel() { // 导出Excel
+      const { export_json_to_excel } = await import('@/vendor/Export2Excel.js') // 文件懒加载 import当作函数
+      const { rows } = await getEmployeeList({ page: 1, size: this.total }) // 导出Excel的内容是所有列表数据
+      const mapKeyPath = { // 中英文转换, 后端需要英文的key数据
+        '入职日期': 'timeOfEntry',
+        '姓名': 'username',
+        '工号': 'workNumber',
+        '手机号': 'mobile',
+        '转正日期': 'correctionTime',
+        '部门': 'departmentName',
+        '聘用形式': 'formOfEmployment'
+      }
+      const header = Object.keys(mapKeyPath)
+      const data = rows.map(item => { // item指arr每一项对象
+        return header.map(h => { // h指header每一项 '姓名', '手机号'
+          if (h === '聘用形式') { // 判断聘用形式 正式和非正式
+            const find = this.hireType.find(ele => ele.id === item[mapKeyPath[h]]) // 如果常量js中hireType的id===聘用形式的数字1或0
+            return find ? find.value : '未知'
+          }
+
+          return item[mapKeyPath[h]] // 不能写成 . 的形式,只能obj[key],不能解析成变量
+        // mapKeyPath[h] h指'入职日期', 根据key拿到英文的timeOfEntry
+        // item[ mapKeyPath[h] ]  去arr中根据key拿到value "2018-11-02"
+        })
+      })
+
+      export_json_to_excel({ // 函数:直接调用
+        header, // 导出数据的表头
+        data, // 具体数据,二维数组,每个数组是一个完整的信息,有姓名/手机号/工号/部门等
+        filename: '人资员工列表', // 导出文件名
+        autoWidth: true, // 单元格是否要自适应宽度
+        bookType: 'xlsx' // 导出文件类型
+      })
     }
   }
 }

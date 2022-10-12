@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const arr = [
+      { // 即item
+        correctionTime: "2018-11-30",
+        departmentName: "总裁办",
+        formOfEmployment: 1,
+        id: "604f764971f93f3ac8f365c2",
+        mobile: "13800000002",
+        password: "e10adc3949ba59abbe56e057f20f883e",
+        staffPhoto: "http://q6cu3t6jv.bkt.clouddn.com/1063705989926227968?t=1616204161907",
+        timeOfEntry: "2018-11-02",
+        username: "管理员",
+        workNumber: "9002",
+      },
+      {
+        correctionTime: "2018-11-30",
+        departmentName: "总裁办",
+        formOfEmployment: 1,
+        id: "604f764971f93f3ac8f365c2",
+        mobile: "13800000002",
+        password: "e10adc3949ba59abbe56e057f20f883e",
+        staffPhoto: "http://q6cu3t6jv.bkt.clouddn.com/1063705989926227968?t=1616204161907",
+        timeOfEntry: "2018-11-02",
+        username: "管理员",
+        workNumber: "9002",
+      }
+    ]
+    const mapKeyPath = { // 路径映射表
+      '入职日期': 'timeOfEntry',
+      '姓名': "username",
+      '工号': "workNumber",
+      '手机号': "mobile",
+      '转正日期': "correctionTime",
+      '部门': 'departmentName',
+      '聘用形式': 'formOfEmployment'
+    }
+    const header = Object.keys(mapKeyPath)
+    const data = arr.map(item => { // item指arr每一项对象
+      return header.map(h => { // h指header每一项 '姓名', '手机号'
+        return item[mapKeyPath[h]] // 不能写成 . 的形式,只能obj[key],不能解析成变量
+        // mapKeyPath[h] h指'入职日期', 根据key拿到英文的timeOfEntry
+        // item[ mapKeyPath[h] ]  去arr中根据key拿到value "2018-11-02"
+      })
+    })
+    console.log(data);
+  </script>
+</body>
+
+</html>
