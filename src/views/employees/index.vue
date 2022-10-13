@@ -39,7 +39,7 @@
 
         <el-table-column label="操作" fixed="right" width="280">
           <template slot-scope="{row}">
-            <el-button type="text" size="small">查看</el-button>
+            <el-button type="text" size="small" @click="goDetail(row)">查看</el-button>
             <el-button type="text" size="small">转正</el-button>
             <el-button type="text" size="small">调岗</el-button>
             <el-button type="text" size="small">离职</el-button>
@@ -163,6 +163,10 @@ export default {
         autoWidth: true, // 单元格是否要自适应宽度
         bookType: 'xlsx' // 导出文件类型
       })
+    },
+    goDetail(row) {
+      console.log(row)
+      this.$router.push('/employees/detail/' + row.id)
     }
   }
 }
