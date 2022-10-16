@@ -14,9 +14,11 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+import Print from 'vue-print-nb' // 打印功能
 
 import components from '@/components' // 引入公共组件里的index.js
 Vue.use(components) // 全局注册公共组件,共25条记录/导入导出
+Vue.use(Print) // 打印功能
 
 // import { imgError } from '@/directive' // 按需注册: 不太好,麻烦
 // Vue.directive('imgError', imgError) // 指令名称, 指令执行的逻辑

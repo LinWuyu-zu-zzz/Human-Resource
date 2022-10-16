@@ -17,6 +17,20 @@
       <el-table v-loading="loading" border :data="list">
         <el-table-column label="序号" sortable="" width="80" type="index" />
         <el-table-column label="姓名" prop="username" />
+        <!-- 加一个头像列,会显示url,要显示头像图片,用作用域插槽 -->
+        <el-table-column label="头像" prop="staffPhoto">
+          <template slot-scope="{ row }">
+            <img
+              style="
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            "
+              :src="row.staffPhoto"
+              @click="showCode(row.staffPhoto)"
+            >
+          </template>
+        </el-table-column>
         <el-table-column label="工号" prop="workNumber" />
         <el-table-column label="聘用形式" prop="formOfEmployment" :formatter="formatterFn" />
         <el-table-column label="部门" prop="departmentName" />
@@ -66,7 +80,14 @@
       </el-row>
     </el-card>
 
+    <!-- 新增员工-弹窗(右上角) -->
     <add-employee ref="refEmployee" :dialog-visible.sync="dialogVisible" />
+
+    <!-- 点击头像,显示二维码 -->
+    <!-- el-dialog组件: 自带懒加载,弹窗里面的东西显示的时候才创建 -->
+    <el-dialog title="二维码" :visible.sync="showCodeDialog">
+      <canvas ref="canvas" />
+    </el-dialog>
   </div>
 </template>
 
@@ -74,6 +95,8 @@
 import { getEmployeeList, delEmployee } from '@/api/employees'
 import HireType from '@/api/constant/employees' // 0和1表示正式
 import AddEmployee from './components/add-employee.vue'
+import QRCode from 'qrcode'
+
 export default {
   name: 'Employees',
   components: { AddEmployee },
@@ -87,7 +110,8 @@ export default {
       total: 0,
       loading: false,
       hireType: HireType.hireType,
-      dialogVisible: false
+      dialogVisible: false,
+      showCodeDialog: false
     }
   },
   mounted() {
@@ -167,6 +191,15 @@ export default {
     goDetail(row) {
       console.log(row)
       this.$router.push('/employees/detail/' + row.id)
+    },
+    showCode(url) { // 接收到图片地址 row.staffPhoto传过来的
+      if (!url) return this.$message.error('暂无头像')
+      this.showCodeDialog = true
+      // Vue核心: 数组驱动,组件系统
+      // 数据更新是异步的,想要立即获得视图,用$nextTick( ()=>{} )
+      this.$nextTick(() => {
+        QRCode.toCanvas(this.$refs.canvas, url)
+      })
     }
   }
 }

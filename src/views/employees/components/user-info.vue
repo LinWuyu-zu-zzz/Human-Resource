@@ -1,5 +1,8 @@
 <template>
   <div class="user-info">
+    <!-- 打印 -->
+    <i class="el-icon-printer" @click="$router.push('/employees/print/' + userId + '?type=personal')" />
+
     <!-- 个人信息 -->
     <el-form label-width="220px">
       <!-- 工号 入职时间 -->
@@ -53,11 +56,14 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <!-- 员工照片 -->
+      <!-- 员工头像 -->
       <el-row class="inline-info">
         <el-col :span="12">
           <el-form-item label="员工头像">
-            <!-- 放置上传图片 -->
+            <!-- 放置员工头像 -->
+
+            <upload-img ref="refAvatar" :default-url="employeesAvatar" @on-success="onSuccess1" />
+
           </el-form-item>
         </el-col>
       </el-row>
@@ -86,11 +92,13 @@
             />
           </el-select>
         </el-form-item>
-        <!-- 个人头像 -->
-        <!-- 员工照片 -->
 
+        <!-- 员工照片 -->
         <el-form-item label="员工照片">
-          <!-- 放置上传图片 -->
+          <!-- 放置员工照片 -->
+
+          <upload-img ref="refPicture" :default-url="employeesPic" @on-success="onSuccess2" />
+
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -456,7 +464,9 @@ export default {
         isThereAnyCompetitionRestriction: '', // 有无竞业限制
         proofOfDepartureOfFormerCompany: '', // 前公司离职证明
         remarks: '' // 备注
-      }
+      },
+      employeesAvatar: '', // 上半部分-默认员工头像
+      employeesPic: '' // 下半部分-员工照片
     }
   },
   created() {
@@ -466,14 +476,24 @@ export default {
   methods: {
     async getUserDetailById() { // 个人详情:上半部分
       const res = await getUserDetailById(this.userId)
+      if (res.staffPhoto) { // 如果员工有默认头像
+        this.employeesAvatar = res.staffPhoto // 用个变量接收
+      }
       this.userInfo = res
     },
     async getPersonalDetail() { // 个人详情:下半部分-基础信息
       const res = await getPersonalDetail(this.userId)
+      if (res.staffPhoto) { // 如果员工有照片
+        this.employeesPic = res.staffPhoto // 用个变量接收
+      }
       this.formData = res
     },
     async saveUserInfo() { // 个人详情:上半部分-点击按钮
       try {
+        if (this.$refs.refAvatar.loading) { // 拿到组件,就可以拿到loading
+          return this.$message.error('头像正在上传') // 优化:如果上传慢,点保存不会提示已成功
+        }
+
         await saveUserDetailById(this.userInfo)
         this.$message.success('更新成功')
       } catch (error) {
@@ -482,12 +502,21 @@ export default {
     },
     async saveEmployeesInfo() { // 个人详情:下半部分-点击按钮
       try {
-        console.log(111)
+        if (this.$refs.refPicture.loading) { // 优化:如果上传慢,点保存不会提示已成功
+          return this.$message.error('照片正在上传')
+        }
+
         await saveEmployeesInfo(this.formData)
         this.$message.success('保存成功')
       } catch (error) {
         this.$message.error('更新失败')
       }
+    },
+    onSuccess1(data) { // 接收子组件UploadImg传过来的参数imgUrl  (用$emit)
+      this.userInfo.staffPhoto = data.imgUrl // 即修改头像:把已处理好上传至腾讯云的图片地址,赋值显示给页面
+    },
+    onSuccess2(data) { // 接收子组件UploadImg传过来的参数imgUrl  (用$emit)
+      this.formData.staffPhoto = data.imgUrl // 即修改头像:把已处理好上传至腾讯云的图片地址,赋值显示给页面
     }
   }
 }

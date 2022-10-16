@@ -1,8 +1,10 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+    <!-- <div class="dashboard-text">name: {{ name }}</div> -->
     <!-- <svg-icon icon-class="eye-open" /> -->
-    <UploadExcel :before-upload="beforeUpload" :on-success="handleSuccess" />
+    <!-- <UploadExcel :before-upload="beforeUpload" :on-success="handleSuccess" /> -->
+    <UploadImg @on-success="onSuccess1" />
+    <UploadImg @on-success="onSuccess2" />
   </div>
 </template>
 
@@ -27,6 +29,12 @@ export default {
         return false
       }
       return true
+    },
+    onSuccess1(val) { // 监听子组件的时间,写上传传给后的逻辑
+      console.log(123, val)
+    },
+    onSuccess2(val) {
+      console.log(456, val)
     }
   }
 }
