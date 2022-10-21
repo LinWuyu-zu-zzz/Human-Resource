@@ -10,7 +10,7 @@ import salarysRouter from './modules/salarys'
 import settingRouter from './modules/setting'
 import socialRouter from './modules/social'
 
-const asyncRouters = [approvalsRouter, attendancesRouter, departmentsRouter,
+export const asyncRouters = [approvalsRouter, attendancesRouter, departmentsRouter,
   employeesRouter, permissionRouter, salarysRouter, settingRouter, socialRouter]
 
 Vue.use(Router)
@@ -76,24 +76,23 @@ export const constantRoutes = [
       name: 'import',
       component: () => import('@/views/import')
     }]
-  },
+  }
 
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: [...constantRoutes, ...asyncRouters]
+  routes: [...constantRoutes] // asyncRouters删掉,在permissions处理成筛选过的asyncRouters,会加过来
 })
 
 const router = createRouter()
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
+// 重置路由 (退出的时候调用,为了清除上一个用户的路由)
 export function resetRouter() {
   const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  router.matcher = newRouter.matcher // 将新的路由将原来的路由信息覆盖
 }
 
 export default router

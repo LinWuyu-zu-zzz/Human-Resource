@@ -2,6 +2,7 @@ import Layout from '@/layout'
 export default {
   path: '/employees',
   component: Layout,
+  meta: { id: 'employees' }, // 前后端约定好,进行路由筛选,不会在其他页面中使用
   children: [
     {
       path: '',

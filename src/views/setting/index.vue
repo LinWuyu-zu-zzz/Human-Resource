@@ -7,6 +7,7 @@
           <el-row>
             <el-col :gutter="10">
               <el-button
+                :disabled="isHasPermission('role-add')"
                 icon="el-icon-plus"
                 size="small"
                 type="primary"
@@ -35,10 +36,11 @@
               <!-- Table组件的插槽  原本是 ="scope",解构成{row} -->
               <!-- @click="editRole(row): 插槽传给editRole,接收到row -->
               <!-- @click="delRole(row.id)"---根据id删除角色,插槽传给delRole()函数 -->
+              <!-- 用自定义指令,直接删除按钮,分配权限在假数据中有权限,store-user.js -->
               <template slot-scope="{row}">
-                <el-button size="small" type="success">分配权限</el-button>
-                <el-button size="small" type="primary" @click="editRole(row)">编辑</el-button>
-                <el-button size="small" type="danger" @click="delRole(row.id)">删除</el-button>
+                <el-button v-isHas="'role-assign'" size="small" type="success" @click="showPermission(row.id)">分配权限</el-button>
+                <el-button :disabled="isHasPermission('role-edit')" size="small" type="primary" @click="editRole(row)">编辑</el-button>
+                <el-button :disabled="isHasPermission('role-delete')" size="small" type="danger" @click="delRole(row.id)">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -96,6 +98,9 @@
     <addRole ref="refRole" :dialog-visible.sync="dialogVisible" @refleshList="getRoleList" />
     <!-- .sync作用: 自动加上一个自定义事件 update:变量名,把参数false拿过来,赋值给dialogVisible-
           在子组件addRole.vue里面的函数handleClose触发 -->
+
+    <!-- 分配权限 -->
+    <set-permission :dialog-visible.sync="dialogVisiblePermission" :role-id="roleId" />
   </div>
 </template>
 
@@ -103,9 +108,13 @@
 import { getRoleListAPI, deleteRole, getCompanyInfo } from '@/api/setting'
 import addRole from './components/addRole.vue'
 import { mapGetters } from 'vuex'
+import SetPermission from './components/setPermission.vue'
+import mixinPermission from '@/minxin/buttonPermission'
+
 export default {
   name: 'Setting',
-  components: { addRole },
+  components: { addRole, SetPermission },
+  mixins: [mixinPermission],
   data() {
     return {
       activeName: 'first',
@@ -117,11 +126,22 @@ export default {
       roleList: [],
       loading: false,
       dialogVisible: false, // 关闭弹出层/对话框
-      companyInfo: {} // 公司信息
+      companyInfo: {}, // 公司信息
+      dialogVisiblePermission: false,
+      roleId: ''
     }
   },
   computed: {
     ...mapGetters(['companyId']) // 拿到companyId,要渲染 公司设置功能
+
+    // 按钮权限:也可以写在computed中,也可以传参,return的这个函数可以传参
+    // 不返回函数,就会调用两次,原本写了这个属性就调用一次,写了小括号写参数,就是调用第二次
+    // 调用两次会报错,拿到返回值再调用就会报错
+    // isHasPermission() {
+    //   return function(permissionId) {
+    //     return !this.$store.state.user.userInfo.roles.points.includes(permissionId)
+    //   }
+    // }
   },
   mounted() {
     this.getRoleList() // 开始就调用一下
@@ -186,7 +206,16 @@ export default {
     // 获取公司基本信息(用于公司设置功能)
     async getCompany() {
       this.companyInfo = await getCompanyInfo(this.companyId) // mapGetters里面已获取,直接用
+    },
+    showPermission(id) { // 点击'分配权限'
+      this.dialogVisiblePermission = true
+      this.roleId = id
     }
+
+    // 封装成mixins
+    // isHasPermission(permissionId) { // 按钮权限: 封装成一个函数,传参,接收编辑/删除/新增按钮的 :disabled 参数
+    //   return !this.$store.state.user.userInfo.roles.points.includes(permissionId)
+    // }
   }
 }
 </script>

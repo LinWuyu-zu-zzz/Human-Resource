@@ -4,6 +4,7 @@ import Layout from '@/layout'
 export default {
   path: '/approvals',
   component: Layout, // 布局组件
+  meta: { id: 'approvals' }, // 前后端约定好,进行路由筛选,不会在其他页面中使用
   children: [ // 布局组件的子组件
     {
       path: '', // 表示该路由为当前二级路由的默认路由,会自动把上面的path匹配好

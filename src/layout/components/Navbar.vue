@@ -9,6 +9,11 @@
     </div>
 
     <div class="right-menu">
+      <!-- 中英文切换组件 -->
+      <ToggleLang />
+
+      <!-- 全屏放大组件 -->
+      <FullScreen />
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img v-imgError="defaultImg" :src="staffPhoto" class="user-avatar">
@@ -37,11 +42,15 @@ import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import defaultImg from '@/assets/common/head.jpg' // 给一个默认图片地址
+import FullScreen from '@/components/FullScreen'
+import ToggleLang from '@/components/ToggleLang'
 
 export default {
   components: {
     // Breadcrumb,
-    Hamburger
+    Hamburger,
+    FullScreen,
+    ToggleLang
   },
   data() {
     return {
@@ -96,6 +105,7 @@ export default {
     float: right;
     height: 100%;
     line-height: 50px;
+    display: flex;
 
     &:focus {
       outline: none;

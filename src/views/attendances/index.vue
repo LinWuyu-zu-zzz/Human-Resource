@@ -1,6 +1,7 @@
 <template>
   <div>
     attendances
+
   </div>
 </template>
 

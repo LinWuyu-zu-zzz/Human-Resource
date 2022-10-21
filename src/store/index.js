@@ -4,7 +4,10 @@ import getters from './getters' // 用于派生数据,计算属性
 import app from './modules/app' // app模块
 import settings from './modules/settings'
 import user from './modules/user'
-// 引入持久化插件
+import permission from './modules/permission'
+import tagsView from './modules/tagsView' // tabs标签页
+
+// 下载并引入持久化插件
 import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
@@ -14,7 +17,9 @@ const store = new Vuex.Store({
   modules: {
     app,
     settings,
-    user
+    user,
+    permission,
+    tagsView
   },
   getters,
   plugins: [createPersistedState({ // 调用createPersistedState函数

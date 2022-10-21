@@ -1,6 +1,7 @@
 // 想要只在vuex里面修改state的值, 而不是在外面也能修改, 那么开启严格模式 use strict
 import { loginAPI } from '@/api/login'
 import { getUserInfoAPI, getUserDetailById } from '@/api/user'
+import { resetRouter } from '@/router'
 export default {
   namespaced: true,
   state: {
@@ -40,6 +41,8 @@ export default {
     async getUserInfo({ commit }) {
       const data = await getUserInfoAPI()
       // console.log('请求用户信息', data)
+      const points = ['role-add', 'role-assign', 'employees-import', 'employees-look'] // 设置按钮权限假数据
+      data.roles.points = points // 赋值给后端返回的按钮权限
 
       const data2 = await getUserDetailById(data.userId)
       // console.log('想拿到用户头像', data2)
@@ -49,13 +52,16 @@ export default {
 
       // 和 data(){ return {} } 类似
       // 深拷贝,如果别的组件调用接口时要改变这个数据,那么最原始请求来的数据不要变
-      return JSON.parse(JSON.stringify(result)) // data为复杂数据类型,引用类型的对象
+      // return JSON.parse(JSON.stringify(result)) // data为复杂数据类型,引用类型的对象
+
+      return data.roles // return给permission.js中,做权限处理用
     },
 
     // 退出: 1.清除token(vuex和缓存里的都要) 2.路由跳转
     logout({ commit }) {
       commit('REMOVE_USERINFO')
       commit('REMOVE_TOKEN')
+      resetRouter() // 退出的时候调用,清除路由,引入router-index.js中的函数
     }
   }
 }

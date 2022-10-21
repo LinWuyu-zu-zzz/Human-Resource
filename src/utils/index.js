@@ -116,7 +116,7 @@ export function param2Obj(url) {
   return obj
 }
 
-// 封装组件架构版块的树形结构,找到一级部门
+// 封装组件架构版块的树形结构,找到一级部门,传2个参数,数组和pid 如'0'
 export function treeData(list, pid) { // 一级看pid, 二级看id
   const arr = [] // 找到pid匹配的数据就收集到数组中
   list.forEach(item => {

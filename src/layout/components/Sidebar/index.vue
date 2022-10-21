@@ -31,7 +31,8 @@ export default {
       'sidebar'
     ]),
     routes() {
-      return this.$router.options.routes
+      // return this.$router.options.routes // 没有动态添加的路由规则,在vuex中permiss.js另外配置
+      return this.$store.state.permission.routes // 拿vuex中的permission.js的自己维护的动态路由规则routes
     },
     activeMenu() {
       const route = this.$route

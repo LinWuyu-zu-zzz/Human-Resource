@@ -8,7 +8,7 @@
 
       <template #after>
         <el-button size="small" type="warning" @click="$router.push('/import')">导入</el-button>
-        <el-button size="small" type="danger" @click="exportExcel">导出</el-button>
+        <el-button :disabled="isHasPermission('employees-export')" size="small" type="danger" @click="exportExcel">导出</el-button>
         <el-button size="small" type="primary" @click="handleEmployee">新增员工</el-button>
       </template>
     </PageTools>
@@ -53,11 +53,13 @@
 
         <el-table-column label="操作" fixed="right" width="280">
           <template slot-scope="{row}">
-            <el-button type="text" size="small" @click="goDetail(row)">查看</el-button>
-            <el-button type="text" size="small">转正</el-button>
-            <el-button type="text" size="small">调岗</el-button>
+            <!-- store-user.js中的假数据没有 'employees-look' ,所以没有这个权限,即禁用-->
+            <!-- 用自定义指令,直接删除按钮,如调岗按钮 -->
+            <el-button :disabled="isHasPermission('employees-look')" type="text" size="small" @click="goDetail(row)">查看</el-button>
+            <el-button :disabled="isHasPermission('employees-zhuanzheng')" type="text" size="small">转正</el-button>
+            <el-button v-isHas="'employees-tiaogang'" type="text" size="small">调岗</el-button>
             <el-button type="text" size="small">离职</el-button>
-            <el-button type="text" size="small">角色</el-button>
+            <el-button type="text" size="small" @click="showSetRole(row)">角色</el-button>
             <el-button type="text" size="small" @click="del(row.id)">删除</el-button>
           <!-- 作用域插槽 row-->
           </template>
@@ -88,6 +90,11 @@
     <el-dialog title="二维码" :visible.sync="showCodeDialog">
       <canvas ref="canvas" />
     </el-dialog>
+
+    <!-- 点击角色-显示弹窗 -->
+    <!-- 思想: 从大到小, 给角色分配权限,再给员工分配角色, 员工--角色--权限    -->
+    <!-- 点击角色按钮,能拿到row这一行的数据,把用户id传给子组件 -->
+    <assign-role :user-id="userId" :dialog-visible-set-role.sync="dialogVisibleSetRole" />
   </div>
 </template>
 
@@ -96,10 +103,13 @@ import { getEmployeeList, delEmployee } from '@/api/employees'
 import HireType from '@/api/constant/employees' // 0和1表示正式
 import AddEmployee from './components/add-employee.vue'
 import QRCode from 'qrcode'
+import AssignRole from './components/assign-role.vue'
+import mixinPermission from '@/minxin/buttonPermission'
 
 export default {
   name: 'Employees',
-  components: { AddEmployee },
+  components: { AddEmployee, AssignRole },
+  mixins: [mixinPermission],
   data() {
     return {
       page: {
@@ -111,7 +121,9 @@ export default {
       loading: false,
       hireType: HireType.hireType,
       dialogVisible: false,
-      showCodeDialog: false
+      showCodeDialog: false,
+      dialogVisibleSetRole: false,
+      userId: ''
     }
   },
   mounted() {
@@ -200,6 +212,10 @@ export default {
       this.$nextTick(() => {
         QRCode.toCanvas(this.$refs.canvas, url)
       })
+    },
+    showSetRole(row) {
+      this.userId = row.id
+      this.dialogVisibleSetRole = true
     }
   }
 }

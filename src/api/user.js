@@ -12,7 +12,7 @@ export function getUserInfoAPI() {
   })
 }
 
-// 获取员工基本信息(如拿到用户头像)
+// 获取员工基本信息(如拿到用户头像,点击角色按钮根据id拿到员工拥有的角色)
 export const getUserDetailById = (id) => {
   return request({
     url: `/sys/user/${id}`
