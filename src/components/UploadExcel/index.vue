@@ -31,7 +31,7 @@ import * as XLSX from 'xlsx'
 export default {
   name: 'UploadExcel',
   props: { // 父组件传进来的,可以传进来就可以用
-    beforeUpload: Function, // eslint-disable-line
+    beforeUpload: Function, // eslint-disable-line 
     // beforeUpload: 可以自定义文件校验规则
 
     onSuccess: Function// eslint-disable-line

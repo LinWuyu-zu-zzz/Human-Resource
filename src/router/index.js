@@ -70,7 +70,7 @@ export const constantRoutes = [
   {
     path: '/import', // 上传文件跳转的页面,不要写在员工的路由中
     component: Layout, // 页面在布局中,被布局组件包裹
-    hidden: true, // 页面没有属于它的导航栏,隐藏呢
+    hidden: true, // 页面没有属于它的导航栏,隐藏了
     children: [{
       path: '',
       name: 'import',
@@ -81,7 +81,7 @@ export const constantRoutes = [
 ]
 
 const createRouter = () => new Router({
-  // mode: 'history', // require service support
+  mode: 'hash', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: [...constantRoutes] // asyncRouters删掉,在permissions处理成筛选过的asyncRouters,会加过来
 })
